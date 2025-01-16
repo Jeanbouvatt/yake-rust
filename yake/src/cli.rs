@@ -1,8 +1,8 @@
-use clap::error::ErrorKind;
-use clap::{CommandFactory, Parser};
 use std::{path::PathBuf, sync::LazyLock};
 
+use clap::error::ErrorKind;
 use clap::{command, Args};
+use clap::{CommandFactory, Parser};
 use yake_rust::{Config, StopWords};
 
 static DEFAULT_CONFIG: LazyLock<Config> = LazyLock::new(Config::default);
@@ -68,9 +68,11 @@ struct Cli {
 
     // -l, --language TEXT
     /// Language
-    #[arg(short, long, default_value= "en", value_parser = parse_language, help = "Language", value_name = "TEXT")]
+    #[arg(short, long, default_value= "en", value_parser = parse_language, help = "Language", value_name = "TEXT"
+    )]
     language: StopWords,
 
+    #[cfg(feature = "json_format")]
     #[arg(long, help = "Dump output as JSON")]
     json: bool,
 }
@@ -92,6 +94,7 @@ pub struct ParsedCli {
     pub config: Config,
     pub language: StopWords,
     pub input: String,
+    #[cfg(feature = "json_format")]
     pub json: bool,
     pub top: Option<usize>,
     pub verbose: bool,
@@ -127,6 +130,7 @@ pub fn parse_cli() -> ParsedCli {
         },
         language: cli.language,
         input,
+        #[cfg(feature = "json_format")]
         json: cli.json,
         verbose: cli.verbose,
         top: cli.top,
